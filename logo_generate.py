@@ -41,7 +41,7 @@ def generate_png(input_image_path):
 
 def generate_ico(input_image_path):
     original_image = Image.open(input_image_path)
-    for size in png_sizes:
+    for size in ico_sizes:
         width, height, output_path = size
         resized_image = original_image.resize((width, height))
         resized_image.save(output_path, format="ICO")
@@ -52,7 +52,7 @@ def generate_icns(input_image_path):
         icns = IcnsFile()
         icns.add_media(file=input_image_path)
         icns.write("icon.icns") # if you want to revise ,do not forget the file name
-        print("Saved icon.icns")
+        print("Saved icon.icns") # 512*512
     except Exception as e:
         print(f"Failed to generate ICNS file: {e}")
 
