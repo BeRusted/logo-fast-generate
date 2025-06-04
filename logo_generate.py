@@ -1,7 +1,7 @@
 # Some uesless information ( maybe not all people use venv? )
 # if you want to use form terminal 
-# make sure you already have  Pillow , icnsutil and cairosvg installed
-# if you do not have , please run " pip install Pillow " , " pip install icnsutil " and " pip install cairosvg "
+# make sure you already have  Pillow  and  icnsutil  installed
+# if you do not have , please run " pip install Pillow " and  " pip install icnsutil " 
 
 # the code that runs it in the terminal is " python logo_generate.py {path-to-your-png} "
 
@@ -11,8 +11,6 @@ import platform
 import subprocess
 from PIL import Image
 from icnsutil import IcnsFile
-import cairosvg
-import io
 
 # logo PNG targe
 png_sizes = [
@@ -27,30 +25,17 @@ png_sizes = [
 # logo ICO targe
 ico_sizes = [(16, 16), (32, 32), (48, 48), (64, 64), (128, 128), (256, 256),(512, 512)]
 
-# PNG or SVG input image
-def load_input_image(input_path):
-    ext = os.path.splitext(input_path)[1].lower()
-    if ext == ".png":
-        return Image.open(input_path)
-    elif ext == ".svg":
-        # SVG → PNG 
-        png_data = cairosvg.svg2png(url=input_path, output_width=512, output_height=512)
-        return Image.open(io.BytesIO(png_data))
-    else:
-        raise ValueError("Only .png and .svg files are supported")
     
-def generate_png(input_image_path):
-    original_image = Image.open(input_image_path)
+def generate_png(original_image):
+    
     for size in png_sizes:
         width, height, output_path = size
         resized_image = original_image.resize((width, height))
         resized_image.save(output_path)
         print(f"Saved {output_path} ({width}x{height})")
 
-def generate_ico(input_image_path):
-    original_image = Image.open(input_image_path)
-    images = [original_image.resize(size, Image.LANCZOS) for size in ico_sizes]
-    images[0].save("icon.ico", format="ICO",sizes=ico_sizes)
+def generate_ico(original_image):
+    original_image.save("icon.ico", format="ICO", sizes=ico_sizes)
     print("Saved icon.ico")
 
 def generate_icns():
@@ -109,15 +94,10 @@ def generate_icns():
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("input_image", type=str)
+    parser.add_argument('input_image', type=str)
     args = parser.parse_args()
-
-    try:
-        original_image = load_input_image(args.input_image)
-    except Exception as e:
-        print(f"Error loading input image: {e}")
-        return
-
+    input_image_path = args.input_image
+    original_image = Image.open(input_image_path)
     generate_png(original_image)
     generate_ico(original_image)
     generate_icns()
